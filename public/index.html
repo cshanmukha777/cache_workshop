@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cache Workshop</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1020;
+      --panel: rgba(20, 28, 52, 0.88);
+      --panel-2: rgba(31, 42, 70, 0.72);
+      --text: #f5f7ff;
+      --muted: #aab4d0;
+      --accent: #7c8cff;
+      --accent-2: #55d6be;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124, 140, 255, 0.25), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(85, 214, 190, 0.16), transparent 28%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 34px 0 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #08101c;
+      font-size: 22px;
+      box-shadow: 0 10px 30px rgba(124, 140, 255, 0.28);
+    }
+
+    .status {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    main {
+      padding: 44px 0 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-card, .side-card, .endpoint {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.22);
+    }
+
+    .hero-card {
+      padding: 42px;
+    }
+
+    .eyebrow {
+      color: var(--accent-2);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 12px 0 16px;
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 650px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .flow {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flow span {
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .arrow { color: var(--muted); }
+
+    .side-card {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .side-card h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    .side-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .ttl {
+      margin-top: 28px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(124, 140, 255, 0.1);
+      border: 1px solid rgba(124, 140, 255, 0.22);
+    }
+
+    .ttl strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 4px;
+    }
+
+    .section-title {
+      margin: 42px 0 16px;
+      font-size: 23px;
+    }
+
+    .endpoints {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .endpoint {
+      padding: 22px;
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .endpoint:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124, 140, 255, 0.45);
+    }
+
+    .method {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: rgba(85, 214, 190, 0.1);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .path {
+      margin-top: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 16px;
+    }
+
+    .endpoint small {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      padding: 0 0 34px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 780px) {
+      .hero, .endpoints { grid-template-columns: 1fr; }
+      .hero-card { padding: 30px; }
+      header { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">⚡</div>
+        <div>Cache Workshop</div>
+      </div>
+      <div class="status">Express API • Running on localhost:3000</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-card">
+          <div class="eyebrow">Layered Express Application</div>
+          <h1>Fast data,<br />smart caching.</h1>
+          <p>
+            A workshop API demonstrating middleware-based caching,
+            one-minute TTL, cache HIT/MISS headers, and automatic
+            invalidation after successful data changes.
+          </p>
+
+          <div class="flow">
+            <span>Route</span><span class="arrow">→</span>
+            <span>Middleware</span><span class="arrow">→</span>
+            <span>Controller</span><span class="arrow">→</span>
+            <span>Service</span><span class="arrow">→</span>
+            <span>Database</span>
+          </div>
+        </div>
+
+        <div class="side-card">
+          <div>
+            <div class="eyebrow">Cache policy</div>
+            <h2>1 minute TTL</h2>
+            <p>
+              Cached responses are reused while fresh. Once expired,
+              the latest data is fetched and cached again.
+            </p>
+          </div>
+
+          <div class="ttl">
+            <div style="color: var(--muted); font-size: 13px;">Response headers</div>
+            <strong>HIT / MISS</strong>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">API endpoints</h2>
+
+      <section class="endpoints">
+        <a class="endpoint" href="/products">
+          <span class="method">GET</span>
+          <div class="path">/products</div>
+          <small>Get all products with middleware caching.</small>
+        </a>
+
+        <a class="endpoint" href="/products/1">
+          <span class="method">GET</span>
+          <div class="path">/products/:id</div>
+          <small>Get a single product with independent caching.</small>
+        </a>
+
+        <div class="endpoint">
+          <span class="method">WRITE</span>
+          <div class="path">POST / PUT / PATCH / DELETE</div>
+          <small>Successful data changes invalidate stale cache entries.</small>
+        </div>
+
+        <div class="endpoint">
+          <span class="method">DEMO</span>
+          <div class="path">MISS → HIT → MISS</div>
+          <small>Fetch fresh data, reuse the cache, then expire after one minute.</small>
+        </div>
+      </section>
+    </main>
+
+    <footer>Cache Workshop • Built with Node.js + Express</footer>
+  </div>
+</body>
+</html>
